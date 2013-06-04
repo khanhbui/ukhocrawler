@@ -1,4 +1,4 @@
-package com.kb.ukhocrawler;
+package com.kb.ukhocrawler.dto;
 
 public class ChartDto {
     private String chartNumber;
@@ -52,6 +52,6 @@ public class ChartDto {
     }
 
     public String toString() {
-        return String.format("{%s, %s, %s, %s, %s}\n", chartNumber, chartType, chartTitle, chartInfoId, chartPreviewId);
+        return String.format("{%s, %s, %s, %s, %s}", chartNumber, chartType, chartTitle, chartInfoId, chartPreviewId);
     }
 }
