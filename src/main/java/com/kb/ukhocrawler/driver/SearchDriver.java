@@ -1,9 +1,6 @@
 package com.kb.ukhocrawler.driver;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +13,23 @@ import com.kb.ukhocrawler.dto.ChartDto;
 import com.kb.ukhocrawler.utils.Constant;
 import com.kb.ukhocrawler.utils.Util;
 
-public class SearchDriver {
+public class SearchDriver implements Runnable {
 
-    List<ChartDto> charts = new ArrayList<ChartDto>();
+    private List<ChartDto> results = new ArrayList<ChartDto>();
+    private Map<String, String> cookies;
+    private String chartPrefix;
+    private String chartNumber;
+    private String chartSuffix;
 
-    public List<ChartDto> getCharts() {
-        return charts;
+    public SearchDriver(Map<String, String> cookies, String chartPrefix, String chartNumber, String chartSuffix) {
+        this.cookies = cookies;
+        this.chartPrefix = chartPrefix;
+        this.chartNumber = chartNumber;
+        this.chartSuffix = chartSuffix;
     }
 
-    public void submit(Map<String, String> cookies, String chartPrefix, String chartNumber, String chartSuffix) throws IOException {
-        Util.print("Fetching %s...", Constant.SEARCH_URL);
+    protected void download() throws IOException {
+        Util.print("Fetching %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_URL, Constant.CHART_PREFIX, chartPrefix, Constant.CHART_NUMBER, chartNumber, Constant.CHART_SUFFIX, chartSuffix);
 
         Document doc = Util.getConnection(Constant.SEARCH_URL)
                 .cookies(cookies)
@@ -64,24 +68,27 @@ public class SearchDriver {
                             break;
                     }
                 }
-                charts.add(chart);
+                results.add(chart);
             }
         }
 
-        Util.print("Done %s.", Constant.SEARCH_URL);
+        Util.print("Done %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_URL, Constant.CHART_PREFIX, chartPrefix, Constant.CHART_NUMBER, chartNumber, Constant.CHART_SUFFIX, chartSuffix);
     }
 
-    public void save() throws IOException {
-        String path = String.format(Constant.GENERAL_INFO_PATH, File.separator, File.separator);
-        PrintStream out = null;
+    @Override
+    public void run() {
         try {
-            Util.createDirs(path);
-            out = new PrintStream(new FileOutputStream(path));
-            out.print(charts.toString());
-        } finally {
-            if (out != null) {
-                out.close();
-            }
+            download();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public List<ChartDto> getResults() {
+        return results;
+    }
+
+    public String getChartNumber() {
+        return chartNumber;
     }
 }

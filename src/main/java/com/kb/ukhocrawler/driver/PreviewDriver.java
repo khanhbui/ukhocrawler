@@ -7,31 +7,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-
 import com.kb.ukhocrawler.dto.ChartDto;
 import com.kb.ukhocrawler.utils.Constant;
 import com.kb.ukhocrawler.utils.Util;
 
-public class PreviewDriver implements Runnable {
+public class PreviewDriver extends SearchDriver {
 
-    protected List<ChartDto> charts;
+    protected ChartDto chart;
+    protected String output;
 
-    public PreviewDriver(List<ChartDto> charts) {
-        this.charts = charts;
+    public PreviewDriver(ChartDto chart, String output) {
+        super(null, null, null, null);
+
+        this.chart = chart;
+        this.output = output;
     }
 
-    public void run() {
-        for (ChartDto chart: charts) {
-            try {
-                download(chart);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    protected void download(ChartDto chart) throws IOException {
+    protected void download() throws IOException {
         if (chart.getPreviewChartId().equals("")) {
             return;
         }
@@ -42,9 +34,8 @@ public class PreviewDriver implements Runnable {
 
         if (image != null){
             String path = String.format(
-                    Constant.PREVIEW_PATH,
-                    File.separator, 
-                    File.separator +
+                    Constant.PREVIEW_PATH, 
+                    output + File.separator +
                         chart.getChartType() + File.separator +
                         chart.getChartNumber() + File.separator +
                         chart.getPreviewChartId());
@@ -58,11 +49,11 @@ public class PreviewDriver implements Runnable {
         }
     }
 
-    public static byte [] getDataFromUrl(String url) throws IOException{
+    private byte [] getDataFromUrl(String url) throws IOException{
         return loadBytesFromURL(new URL(url));
     }
 
-    private static byte[] loadBytesFromURL(URL url) throws IOException {
+    private byte[] loadBytesFromURL(URL url) throws IOException {
         byte[] b = null;
         URLConnection con = url.openConnection();
         int size = con.getContentLength();
@@ -81,7 +72,7 @@ public class PreviewDriver implements Runnable {
         return b;
       }
 
-    public static byte[] loadBytesFromStreamForSize(InputStream in, int size) throws IOException {
+    private byte[] loadBytesFromStreamForSize(InputStream in, int size) throws IOException {
         int count, index = 0;
         byte[] b = new byte[size];
 
@@ -93,11 +84,11 @@ public class PreviewDriver implements Runnable {
         return b;
     }
 
-    public static  byte[] loadBytesFromStream(InputStream in) throws IOException {
+    private byte[] loadBytesFromStream(InputStream in) throws IOException {
         return loadBytesFromStream(in, Constant.DEFAULT_CHUNK_SIZE);
     }
 
-    private static byte[] loadBytesFromStream(InputStream in, int chunkSize) throws IOException {
+    private byte[] loadBytesFromStream(InputStream in, int chunkSize) throws IOException {
         if (chunkSize < 1) {
             chunkSize = Constant.DEFAULT_CHUNK_SIZE;
         }

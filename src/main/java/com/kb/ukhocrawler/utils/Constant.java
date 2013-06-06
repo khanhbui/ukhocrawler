@@ -11,7 +11,7 @@ public class Constant {
     public static final String CHART_NUMBER = "ChartNumber";
     public static final String CHART_SUFFIX = "ChartSuffix";
     public static final int DEFAULT_CHUNK_SIZE = 56;
-    public static final String INFO_PATH = ".%sukho%s.html";
-    public static final String PREVIEW_PATH = ".%sukho%s.jpg";
-    public static final String GENERAL_INFO_PATH = ".%sukho%sinfo.txt";
+    public static final String INFO_PATH = "%s.txt";
+    public static final String PREVIEW_PATH = "%s.jpg";
+    public static final String GENERAL_INFO_PATH = "%sinfo.txt";
 }
