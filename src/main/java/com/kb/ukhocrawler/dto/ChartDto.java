@@ -1,16 +1,22 @@
 package com.kb.ukhocrawler.dto;
 
+import java.util.List;
+
 public class ChartDto {
+    private String prefix;
     private String chartNumber;
-    private String chartType;
+    private String suffix;
     private String chartTitle;
+    private String publicationDate;
+    private String latestEditionDate;
+    private String chartSize;
+    private String image;
+    private List<PanelDto> panels;
+
+    private String chartType;
     private String chartInfoId;
     private String chartPreviewId;
-    
-    public ChartDto(){
-        
-    }
-    
+
     public void setChartNumber(String chartNumber) {
         this.chartNumber = chartNumber;
     }
@@ -52,6 +58,62 @@ public class ChartDto {
     }
 
     public String toString() {
-        return String.format("{%s, %s, %s, %s, %s}", chartNumber, chartType, chartTitle, chartInfoId, chartPreviewId);
+        return String.format("{%s, %s, %s, %s, %s, %s, %s}", prefix, chartNumber, suffix, chartType, chartTitle, chartInfoId, chartPreviewId);
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getSuffix() {
+        return suffix;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+    public String getPublicationDate() {
+        return publicationDate;
+    }
+
+    public void setPublicationDate(String publicationDate) {
+        this.publicationDate = publicationDate;
+    }
+
+    public String getLatestEditionDate() {
+        return latestEditionDate;
+    }
+
+    public void setLatestEditionDate(String latestEditionDate) {
+        this.latestEditionDate = latestEditionDate;
+    }
+
+    public String getChartSize() {
+        return chartSize;
+    }
+
+    public void setChartSize(String chartSize) {
+        this.chartSize = chartSize;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public List<PanelDto> getPanels() {
+        return panels;
+    }
+
+    public void setPanels(List<PanelDto> panels) {
+        this.panels = panels;
     }
 }

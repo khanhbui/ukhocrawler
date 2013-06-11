@@ -18,14 +18,24 @@ public class SearchDriver implements Runnable {
     private List<ChartDto> results = new ArrayList<ChartDto>();
     private Map<String, String> cookies;
     private String chartPrefix;
+    public String getChartPrefix() {
+        return chartPrefix;
+    }
+
     private String chartNumber;
     private String chartSuffix;
+    public String getChartSuffix() {
+        return chartSuffix;
+    }
 
-    public SearchDriver(Map<String, String> cookies, String chartPrefix, String chartNumber, String chartSuffix) {
+    private int searchMethod;
+
+    public SearchDriver(Map<String, String> cookies, String chartPrefix, String chartNumber, String chartSuffix, int searchMethod) {
         this.cookies = cookies;
         this.chartPrefix = chartPrefix;
         this.chartNumber = chartNumber;
         this.chartSuffix = chartSuffix;
+        this.searchMethod = searchMethod;
     }
 
     protected void download() throws IOException {
@@ -45,11 +55,15 @@ public class SearchDriver implements Runnable {
                 Elements tds = tr.getElementsByTag("td");
 
                 ChartDto chart = new ChartDto();
+                chart.setPrefix(chartPrefix);
+                chart.setChartNumber(chartNumber);
+                chart.setSuffix(chartSuffix);
+                String str = "";
                 for (int i = 0; i < tds.size(); ++i) {
                     Element td = tds.get(i);
                     switch (i) {
                         case 0:
-                            chart.setChartNumber(td.text());
+                            str = td.text();
                             break;
                         case 1:
                             chart.setChartType(td.text());
@@ -68,14 +82,20 @@ public class SearchDriver implements Runnable {
                             break;
                     }
                 }
-                results.add(chart);
+                if (searchMethod == 1) {
+                    if (str.contains(chartPrefix + chartNumber + chartSuffix)) {
+                        results.add(chart);
+                        break;
+                    }
+                } else {
+                    results.add(chart);
+                }
             }
         }
 
         Util.print("Done %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_URL, Constant.CHART_PREFIX, chartPrefix, Constant.CHART_NUMBER, chartNumber, Constant.CHART_SUFFIX, chartSuffix);
     }
 
-    @Override
     public void run() {
         try {
             download();

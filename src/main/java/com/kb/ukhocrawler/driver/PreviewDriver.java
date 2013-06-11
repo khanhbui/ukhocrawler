@@ -17,7 +17,7 @@ public class PreviewDriver extends SearchDriver {
     protected String output;
 
     public PreviewDriver(ChartDto chart, String output) {
-        super(null, null, null, null);
+        super(null, null, null, null, 0);
 
         this.chart = chart;
         this.output = output;
@@ -30,6 +30,7 @@ public class PreviewDriver extends SearchDriver {
 
         String url = String.format(Constant.PREVIEW_URL, chart.getPreviewChartId());
         Util.print("Fetching image from %s...", url);
+        chart.setImage(url);
         byte [] image = getDataFromUrl(url);
 
         if (image != null){
