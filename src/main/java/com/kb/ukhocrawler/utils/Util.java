@@ -1,6 +1,7 @@
 package com.kb.ukhocrawler.utils;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +25,7 @@ public class Util {
     }
 
     public static void print(String msg, Object... args) {
-        System.out.println(String.format(msg, args));
+        System.out.println(String.format("%s: %s", Calendar.getInstance().getTime(), String.format(msg, args)));
     }
 
     public static boolean createDirs(String path) {
@@ -33,5 +34,9 @@ public class Util {
             return file.mkdirs();
         }
         return true;
+    }
+
+    public static void error(String msg, Object... args) {
+        System.err.println(String.format("%s: %s", Calendar.getInstance().getTime(), String.format(msg, args)));
     }
 }

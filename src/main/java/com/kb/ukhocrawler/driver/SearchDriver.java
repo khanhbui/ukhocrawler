@@ -100,6 +100,7 @@ public class SearchDriver implements Runnable {
         try {
             download();
         } catch (IOException e) {
+            Util.error("Error: %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_URL, Constant.CHART_PREFIX, chartPrefix, Constant.CHART_NUMBER, chartNumber, Constant.CHART_SUFFIX, chartSuffix);
             e.printStackTrace();
         }
     }

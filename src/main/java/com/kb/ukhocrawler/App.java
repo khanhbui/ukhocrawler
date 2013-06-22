@@ -34,17 +34,18 @@ public class App
 {
     public static void main( String[] args ) throws IOException, InvalidFormatException
     {
-        Validate.isTrue(args.length == 2, "Usage: supply input file, output directory to fetch.");
+        Validate.isTrue(args.length >= 2, "Usage: supply input file, output directory to fetch.");
         String input = args[0];
         String output = args[1];
         String outputDir = new File(output).getParent();
+        int connectionNum = args.length > 2 ? Integer.parseInt(args[2]) : 3;
 
         // submit the index page to retrieve cookie information
         IndexDriver index = new IndexDriver();
         index.submit();
 
         // start retrieving chart information
-        ExecutorService searchExecutor = Executors.newFixedThreadPool(5);
+        ExecutorService searchExecutor = Executors.newFixedThreadPool(connectionNum);
         List<SearchDriver> searchers = new ArrayList<SearchDriver>();
         Map<String, String> cookies = index.getCookies();
         List<String[]> list = App.getInput(input);
@@ -58,7 +59,7 @@ public class App
         }
 
         // start retrieving info and image
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(connectionNum);
         Map<String, Boolean> flag = new HashMap<String, Boolean>();
         List<ChartDto> charts = new ArrayList<ChartDto>();
         for (SearchDriver searcher: searchers) {
