@@ -14,4 +14,7 @@ public class Constant {
     public static final String INFO_PATH = "%s.txt";
     public static final String PREVIEW_PATH = "%s.jpg";
     public static final String GENERAL_INFO_PATH = "%sinfo.txt";
+
+    public static final String SEARCH_BOOK_URL = "http://www.ukho.gov.uk/onlinecatalogue/browse_PUBs_results.asp?FilterMethod=1";
+    public static final String PUB_NUMBER = "PubNumber";
 }

@@ -1,4 +1,4 @@
-package com.kb.ukhocrawler.dto;
+package com.kb.ukhocrawler.dto.chart;
 
 public class PanelDto {
     private String panelName;

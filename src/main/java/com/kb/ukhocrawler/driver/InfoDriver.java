@@ -7,8 +7,8 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import com.kb.ukhocrawler.dto.ChartDto;
-import com.kb.ukhocrawler.dto.PanelDto;
+import com.kb.ukhocrawler.dto.chart.ChartDto;
+import com.kb.ukhocrawler.dto.chart.PanelDto;
 import com.kb.ukhocrawler.utils.Constant;
 import com.kb.ukhocrawler.utils.Util;
 

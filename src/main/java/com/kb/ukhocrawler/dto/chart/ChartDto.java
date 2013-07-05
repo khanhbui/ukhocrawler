@@ -1,8 +1,10 @@
-package com.kb.ukhocrawler.dto;
+package com.kb.ukhocrawler.dto.chart;
 
 import java.util.List;
 
-public class ChartDto {
+import com.kb.ukhocrawler.dto.OutputDto;
+
+public class ChartDto extends OutputDto {
     private String prefix;
     private String chartNumber;
     private String suffix;

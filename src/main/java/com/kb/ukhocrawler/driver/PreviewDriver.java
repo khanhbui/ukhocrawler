@@ -7,22 +7,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import com.kb.ukhocrawler.dto.ChartDto;
+
+import com.kb.ukhocrawler.dto.chart.ChartDto;
 import com.kb.ukhocrawler.utils.Constant;
 import com.kb.ukhocrawler.utils.Util;
 
-public class PreviewDriver extends SearchDriver {
+public class PreviewDriver extends RunnableDriver {
 
     protected ChartDto chart;
     protected String output;
 
     public PreviewDriver(ChartDto chart, String output) {
-        super(null, null, null, null, 0);
-
         this.chart = chart;
         this.output = output;
     }
 
+    @Override
     protected void download() throws IOException {
         if (chart.getPreviewChartId().equals("")) {
             return;
@@ -48,6 +48,10 @@ public class PreviewDriver extends SearchDriver {
             out.close();
             Util.print("Done %s --> %s.", url, path);
         }
+    }
+
+    @Override
+    protected void onError() {
     }
 
     private byte [] getDataFromUrl(String url) throws IOException{
