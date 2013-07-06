@@ -23,9 +23,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.helper.Validate;
 
 import com.kb.ukhocrawler.driver.IndexDriver;
-import com.kb.ukhocrawler.driver.InfoDriver;
 import com.kb.ukhocrawler.driver.PreviewDriver;
+import com.kb.ukhocrawler.driver.chart.ChartInfoDriver;
 import com.kb.ukhocrawler.driver.chart.ChartSearchDriver;
+import com.kb.ukhocrawler.dto.OutputDto;
 import com.kb.ukhocrawler.dto.chart.ChartDto;
 import com.kb.ukhocrawler.dto.chart.ChartInputDto;
 import com.kb.ukhocrawler.dto.chart.PanelDto;
@@ -68,11 +69,11 @@ public class ChartController {
         List<ChartDto> charts = new ArrayList<ChartDto>();
         for (ChartSearchDriver searcher: searchers) {
             Util.print("Results: %s %s %s: %s", searcher.getInput().getChartPrefix(), searcher.getInput().getChartNumber(), searcher.getInput().getChartSuffix(), searcher.getResults());
-            for (ChartDto chart: searcher.getResults()) {
+            for (OutputDto chart: searcher.getResults()) {
                 if (!flag.containsKey(chart.toString())) {
-                    executor.execute(new PreviewDriver(chart, outputDir));
-                    executor.execute(new InfoDriver(chart));
-                    charts.add(chart);
+                    executor.execute(new PreviewDriver((ChartDto) chart, outputDir));
+                    executor.execute(new ChartInfoDriver((ChartDto) chart));
+                    charts.add((ChartDto) chart);
                     flag.put(chart.toString(), true);
                 }
             }

@@ -8,7 +8,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.kb.ukhocrawler.driver.SearchDriver;
-import com.kb.ukhocrawler.dto.chart.ChartDto;
+import com.kb.ukhocrawler.dto.pub.PubDto;
 import com.kb.ukhocrawler.dto.pub.PubInputDto;
 import com.kb.ukhocrawler.utils.Constant;
 import com.kb.ukhocrawler.utils.Util;
@@ -28,7 +28,7 @@ public class PubSearchDriver extends SearchDriver {
     protected void download() throws IOException {
         PubInputDto pubInput = this.getInput();
 
-        Util.print("Fetching %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_BOOK_URL, Constant.PUB_NUMBER, pubInput.getPubNumber());
+        Util.print("Fetching %s&%s=%s", Constant.SEARCH_BOOK_URL, Constant.PUB_NUMBER, pubInput.getPubNumber());
 
         Document doc = Util.getConnection(Constant.SEARCH_BOOK_URL)
                 .cookies(cookies)
@@ -41,8 +41,8 @@ public class PubSearchDriver extends SearchDriver {
             for (Element tr : trs) {
                 Elements tds = tr.getElementsByTag("td");
 
-                ChartDto chart = new ChartDto();
-                chart.setPrefix(pubInput.getPubNumber());
+                PubDto pub = new PubDto();
+                pub.setNumber(pubInput.getPubNumber());
                 String str = "";
                 for (int i = 0; i < tds.size(); ++i) {
                     Element td = tds.get(i);
@@ -50,18 +50,9 @@ public class PubSearchDriver extends SearchDriver {
                         case 0:
                             str = td.text();
                             break;
-                        case 1:
-                            chart.setChartType(td.text());
-                            break;
-                        case 3:
-                            chart.setChartTitle(td.text());
-                        case 4:
+                        case 2:
                             Element a = td.getElementsByTag("a").first();
-                            chart.setChartInfoId(a == null ? "" : Util.extract(a.attr("href"), "(.*)ChartID=(\\d+)"));
-                            break;
-                        case 5:
-                            a = td.getElementsByTag("a").first();
-                            chart.setChartPreviewId(a == null ? "" : Util.extract(a.attr("href"), "(.*)ChartID=(\\d+)(.*)"));
+                            pub.setPubId(a == null ? "" : Util.extract(a.attr("href"), "(.*)PubID=(\\d+)"));
                             break;
                         default:
                             break;
@@ -69,21 +60,21 @@ public class PubSearchDriver extends SearchDriver {
                 }
                 if (searchMethod == 1) {
                     if (str.contains(pubInput.getPubNumber())) {
-                        results.add(chart);
+                        results.add(pub);
                         break;
                     }
                 } else {
-                    results.add(chart);
+                    results.add(pub);
                 }
             }
         }
 
-        Util.print("Done %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_BOOK_URL, Constant.PUB_NUMBER, pubInput.getPubNumber());
+        Util.print("Done %s&%s=%s", Constant.SEARCH_BOOK_URL, Constant.PUB_NUMBER, pubInput.getPubNumber());
     }
 
     @Override
     protected void onError() {
         PubInputDto pubInput = this.getInput();
-        Util.error("Error: %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_BOOK_URL, Constant.PUB_NUMBER, pubInput.getPubNumber());
+        Util.error("Error: %s&%s=%s", Constant.SEARCH_BOOK_URL, Constant.PUB_NUMBER, pubInput.getPubNumber());
     }
 }

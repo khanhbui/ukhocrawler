@@ -22,16 +22,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jsoup.helper.Validate;
 
 import com.kb.ukhocrawler.driver.IndexDriver;
-import com.kb.ukhocrawler.driver.InfoDriver;
+import com.kb.ukhocrawler.driver.pub.PubInfoDriver;
 import com.kb.ukhocrawler.driver.pub.PubSearchDriver;
-import com.kb.ukhocrawler.dto.chart.ChartDto;
-import com.kb.ukhocrawler.dto.chart.PanelDto;
+import com.kb.ukhocrawler.dto.OutputDto;
 import com.kb.ukhocrawler.dto.pub.PubInputDto;
+import com.kb.ukhocrawler.dto.pub.PubDto;
 import com.kb.ukhocrawler.utils.Util;
 
-public class BookController {
+public class PubController {
 
-    public BookController() {
+    public PubController() {
     }
 
     public void start(String[] args) throws IOException, InvalidFormatException
@@ -62,14 +62,14 @@ public class BookController {
         // start retrieving info and image
         ExecutorService executor = Executors.newFixedThreadPool(connectionNum);
         Map<String, Boolean> flag = new HashMap<String, Boolean>();
-        List<ChartDto> charts = new ArrayList<ChartDto>();
+        List<PubDto> pubs = new ArrayList<PubDto>();
         for (PubSearchDriver searcher: searchers) {
             Util.print("Results: %s: %s", searcher.getInput().getPubNumber(), searcher.getResults());
-            for (ChartDto chart: searcher.getResults()) {
-                if (!flag.containsKey(chart.toString())) {
-                    executor.execute(new InfoDriver(chart));
-                    charts.add(chart);
-                    flag.put(chart.toString(), true);
+            for (OutputDto pub: searcher.getResults()) {
+                if (!flag.containsKey(pub.toString())) {
+                    executor.execute(new PubInfoDriver((PubDto) pub));
+                    pubs.add((PubDto) pub);
+                    flag.put(pub.toString(), true);
                 }
             }
         }
@@ -78,71 +78,37 @@ public class BookController {
         }
 
         // save to file
-        this.save(output, charts);
+        this.save(output, pubs);
 
         Util.print("Finished all. (tung hoa, tung hoa, tung hoa)");
     }
 
-    public void save(String output, List<ChartDto> charts) throws IOException {
+    public void save(String output, List<PubDto> pubs) throws IOException {
         FileOutputStream out = new FileOutputStream(output);
         Workbook wb = new HSSFWorkbook();
 
         Sheet s1 = wb.createSheet("Charts");
         Row r = s1.createRow(0);
-        r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("Prefix");
-        r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Chart Number");
-        r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue("Suffix");
-        r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue("Chart Title");
-        r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue("Publication Date");
-        r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue("Latest Edition date");
-        r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue("Chart Size");
-        r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue("Image");
+        r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("Number");
+        r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Title");
+        r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue("Sub Title");
+        r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue("Type");
+        r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue("Sub Type");
+        r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue("Edition No");
+        r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue("Pub Year");
 
-        Sheet s2 = wb.createSheet("Panels");
-        r = s2.createRow(0);
-        r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("ID");
-        r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Prefix");
-        r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue("Chart Number");
-        r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue("Suffix");
-        r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue("Panel Name");
-        r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue("Area Name");
-        r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue("Natural Scale");
-        r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue("North Limit");
-        r.createCell(8, Cell.CELL_TYPE_STRING).setCellValue("South Limit");
-        r.createCell(9, Cell.CELL_TYPE_STRING).setCellValue("East Limit");
-        r.createCell(10, Cell.CELL_TYPE_STRING).setCellValue("West Limit");
-
-        int n = 1;
-        for (int i = 0; i < charts.size(); ++i) {
-            ChartDto chart = charts.get(i);
+        for (int i = 0; i < pubs.size(); ++i) {
+            PubDto pub = pubs.get(i);
+            Util.print("%s", pub);
 
             r = s1.createRow(i + 1);
-            r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(chart.getPrefix());
-            r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartNumber());
-            r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(chart.getSuffix());
-            r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartTitle());
-            r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue(chart.getPublicationDate());
-            r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue(chart.getLatestEditionDate());
-            r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartSize());
-            r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue(chart.getImage());
-
-            List<PanelDto> panels = chart.getPanels();
-            for(int j = 0; j < panels.size(); ++j) {
-                PanelDto panel = panels.get(j);
-
-                r = s2.createRow(n++);
-                r.createCell(0, Cell.CELL_TYPE_NUMERIC).setCellValue(n);
-                r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(chart.getPrefix());
-                r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartNumber());
-                r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(chart.getSuffix());
-                r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue(panel.getPanelName());
-                r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue(panel.getAreaName());
-                r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue(panel.getNaturalScale());
-                r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue(panel.getNorthLimit());
-                r.createCell(8, Cell.CELL_TYPE_STRING).setCellValue(panel.getSouthLimit());
-                r.createCell(9, Cell.CELL_TYPE_STRING).setCellValue(panel.getEastLimit());
-                r.createCell(10, Cell.CELL_TYPE_STRING).setCellValue(panel.getWestLimit());
-            }
+            r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(pub.getNumber());
+            r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(pub.getTitle());
+            r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(pub.getSubTitle());
+            r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(pub.getType());
+            r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue(pub.getSubType());
+            r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue(pub.getEditionNo());
+            r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue(pub.getPubYear());
         }
 
         wb.write(out);
@@ -169,7 +135,7 @@ public class BookController {
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
             String[] item = new String[3];
-            for (int i = 0; i < 3; ++i) {
+            for (int i = 0; i < 1; ++i) {
                 Cell cell = row.getCell(i);
                 if (cell == null) {
                     item[i] = "";

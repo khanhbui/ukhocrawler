@@ -17,4 +17,5 @@ public class Constant {
 
     public static final String SEARCH_BOOK_URL = "http://www.ukho.gov.uk/onlinecatalogue/browse_PUBs_results.asp?FilterMethod=1";
     public static final String PUB_NUMBER = "PubNumber";
+    public static final String PUB_INFO_URL = "http://www.ukho.gov.uk/onlinecatalogue/popup_details_pubs.asp?PubID=%s";
 }
