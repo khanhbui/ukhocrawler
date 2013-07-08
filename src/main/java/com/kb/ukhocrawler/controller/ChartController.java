@@ -20,16 +20,14 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jsoup.helper.Validate;
-
-import com.kb.ukhocrawler.driver.IndexDriver;
-import com.kb.ukhocrawler.driver.PreviewDriver;
-import com.kb.ukhocrawler.driver.chart.ChartInfoDriver;
-import com.kb.ukhocrawler.driver.chart.ChartSearchDriver;
 import com.kb.ukhocrawler.dto.OutputDto;
 import com.kb.ukhocrawler.dto.chart.ChartDto;
 import com.kb.ukhocrawler.dto.chart.ChartInputDto;
 import com.kb.ukhocrawler.dto.chart.PanelDto;
+import com.kb.ukhocrawler.service.IndexService;
+import com.kb.ukhocrawler.service.chart.ChartInfoService;
+import com.kb.ukhocrawler.service.chart.ChartSearchService;
+import com.kb.ukhocrawler.service.chart.ChartPreviewService;
 import com.kb.ukhocrawler.utils.Util;
 
 public class ChartController {
@@ -39,23 +37,22 @@ public class ChartController {
 
     public void start(String[] args) throws IOException, InvalidFormatException
     {
-        Validate.isTrue(args.length >= 2, "Usage: supply input file, output directory to fetch.");
-        String input = args[0];
-        String output = args[1];
+        String input = args[1];
+        String output = args[2];
         String outputDir = new File(output).getParent();
-        int connectionNum = args.length > 2 ? Integer.parseInt(args[2]) : 3;
+        int connectionNum = args.length > 3 ? Integer.parseInt(args[3]) : 3;
 
         // submit the index page to retrieve cookie information
-        IndexDriver index = new IndexDriver();
+        IndexService index = new IndexService();
         index.submit();
 
         // start retrieving chart information
         ExecutorService searchExecutor = Executors.newFixedThreadPool(connectionNum);
-        List<ChartSearchDriver> searchers = new ArrayList<ChartSearchDriver>();
+        List<ChartSearchService> searchers = new ArrayList<ChartSearchService>();
         Map<String, String> cookies = index.getCookies();
         List<String[]> list = this.getInput(input);
         for (String[] item: list) {
-            ChartSearchDriver searcher = new ChartSearchDriver(cookies, new ChartInputDto(item[0], item[1], item[2]), 1);
+            ChartSearchService searcher = new ChartSearchService(cookies, new ChartInputDto(item[0], item[1], item[2]), 1);
             searchExecutor.execute(searcher);
             searchers.add(searcher);
         }
@@ -67,12 +64,12 @@ public class ChartController {
         ExecutorService executor = Executors.newFixedThreadPool(connectionNum);
         Map<String, Boolean> flag = new HashMap<String, Boolean>();
         List<ChartDto> charts = new ArrayList<ChartDto>();
-        for (ChartSearchDriver searcher: searchers) {
+        for (ChartSearchService searcher: searchers) {
             Util.print("Results: %s %s %s: %s", searcher.getInput().getChartPrefix(), searcher.getInput().getChartNumber(), searcher.getInput().getChartSuffix(), searcher.getResults());
             for (OutputDto chart: searcher.getResults()) {
                 if (!flag.containsKey(chart.toString())) {
-                    executor.execute(new PreviewDriver((ChartDto) chart, outputDir));
-                    executor.execute(new ChartInfoDriver((ChartDto) chart));
+                    executor.execute(new ChartPreviewService((ChartDto) chart, outputDir));
+                    executor.execute(new ChartInfoService((ChartDto) chart));
                     charts.add((ChartDto) chart);
                     flag.put(chart.toString(), true);
                 }
@@ -93,6 +90,7 @@ public class ChartController {
         Workbook wb = new HSSFWorkbook();
 
         Sheet s1 = wb.createSheet("Charts");
+        s1.createFreezePane(0, 1);
         Row r = s1.createRow(0);
         r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("Prefix");
         r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Chart Number");
@@ -104,6 +102,7 @@ public class ChartController {
         r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue("Image");
 
         Sheet s2 = wb.createSheet("Panels");
+        s2.createFreezePane(0, 1);
         r = s2.createRow(0);
         r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("ID");
         r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Prefix");
@@ -117,7 +116,7 @@ public class ChartController {
         r.createCell(9, Cell.CELL_TYPE_STRING).setCellValue("East Limit");
         r.createCell(10, Cell.CELL_TYPE_STRING).setCellValue("West Limit");
 
-        int n = 1;
+        int j = 1;
         for (int i = 0; i < charts.size(); ++i) {
             ChartDto chart = charts.get(i);
 
@@ -131,12 +130,9 @@ public class ChartController {
             r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartSize());
             r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue(chart.getImage());
 
-            List<PanelDto> panels = chart.getPanels();
-            for(int j = 0; j < panels.size(); ++j) {
-                PanelDto panel = panels.get(j);
-
-                r = s2.createRow(n++);
-                r.createCell(0, Cell.CELL_TYPE_NUMERIC).setCellValue(n);
+            for(PanelDto panel: chart.getPanels()) {
+                r = s2.createRow(j++);
+                r.createCell(0, Cell.CELL_TYPE_NUMERIC).setCellValue(j);
                 r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(chart.getPrefix());
                 r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartNumber());
                 r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(chart.getSuffix());

@@ -13,12 +13,12 @@ public class Util {
         return Jsoup.connect(url).userAgent(Constant.USER_AGENT);
     }
 
-    public static String extract(String str, String pattern) {
+    public static String extract(String str, String pattern, int returnedGroup) {
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(str);
 
         if (m.find()) {
-           return m.group(2);
+           return m.group(returnedGroup);
         } else {
            return "";
         }

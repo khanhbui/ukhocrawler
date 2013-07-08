@@ -1,5 +1,8 @@
 package com.kb.ukhocrawler.dto.pub;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.kb.ukhocrawler.dto.OutputDto;
 
 public class PubDto extends OutputDto {
@@ -13,9 +16,12 @@ public class PubDto extends OutputDto {
 
     private String pubId;
 
+    private List<PubSupplement> supplements = new ArrayList<PubSupplement>();
+
     public String toString() {
         return String.format("{%s, %s, %s, %s, %s, %s, %s, %s}",  this.number, this.title, this.subTitle, this.type, this.subType, this.editionNo, this.pubYear, this.pubId);
     }
+
     public String getNumber() {
         return number;
     }
@@ -78,5 +84,17 @@ public class PubDto extends OutputDto {
 
     public void setPubId(String pubId) {
         this.pubId = pubId;
+    }
+
+    public List<PubSupplement> getSupplements() {
+        return supplements;
+    }
+
+    public void setSupplements(List<PubSupplement> supplements) {
+        this.supplements = supplements;
+    }
+
+    public void addSup(PubSupplement sup) {
+        this.supplements.add(sup);
     }
 }
