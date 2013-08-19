@@ -39,7 +39,7 @@ public class PubController {
     {
         String input = args[1];
         String output = args[2];
-        int connectionNum = args.length > 3 ? Integer.parseInt(args[3]) : 3;
+        int connectionNum = args.length > 3 ? Integer.parseInt(args[3]) : 2;
 
         // submit the index page to retrieve cookie information
         IndexService index = new IndexService();

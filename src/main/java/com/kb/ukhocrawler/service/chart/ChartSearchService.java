@@ -38,6 +38,22 @@ public class ChartSearchService extends SearchService {
                 .post();
 
         Elements tbodies = doc.getElementsByTag("tbody");
+        Boolean found = this.extractTbodies(tbodies);
+
+        String nextPage = null;
+        while (!found && (nextPage = this.nextPage(doc)) != null) {
+            doc = Util.getConnection(Constant.MAIN_URL + nextPage)
+                    .cookies(cookies)
+                    .get();
+            tbodies = doc.getElementsByTag("tbody");
+            found = this.extractTbodies(tbodies);
+            Util.print("----- Done %s", Constant.MAIN_URL + nextPage);
+        }
+    }
+
+    private Boolean extractTbodies(Elements tbodies) {
+        ChartInputDto chartInput = this.getInput();
+
         for (Element tbody : tbodies) {
             Elements trs = tbody.getElementsByTag("tr");
             for (Element tr : trs) {
@@ -74,7 +90,7 @@ public class ChartSearchService extends SearchService {
                 if (searchMethod == 1) {
                     if (str.contains(chartInput.getChartPrefix() + chartInput.getChartNumber() + chartInput.getChartSuffix())) {
                         results.add(chart);
-                        break;
+                        return true;
                     }
                 } else {
                     results.add(chart);
@@ -83,6 +99,8 @@ public class ChartSearchService extends SearchService {
         }
 
         Util.print("Done %s&%s=%s&%s=%s&%s=%s", Constant.SEARCH_URL, Constant.CHART_PREFIX, chartInput.getChartPrefix(), Constant.CHART_NUMBER, chartInput.getChartNumber(), Constant.CHART_SUFFIX, chartInput.getChartSuffix());
+
+        return false;
     }
 
     @Override

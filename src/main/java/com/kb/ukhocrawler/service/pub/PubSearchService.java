@@ -57,12 +57,6 @@ public class PubSearchService extends SearchService {
         Util.error("PubSearchService::onError: %s&%s=%s", Constant.SEARCH_BOOK_URL, Constant.PUB_NUMBER, pubInput.getPubNumber());
     }
 
-    private String nextPage(Document doc) {
-        //<a href="browse_PUBS_results.asp?FilterMethod=1&amp;PubNumber=1&amp;offset=10" title="Next 10" in_tag="ul" kaspersky_status="skipped">Next 10</a>
-        Element a = doc.select("a[title=Next 10]").first();
-        return a == null ? null : a.attr("href");
-    }
-
     private void extractTbodies(Elements tbodies) {
         PubInputDto pubInput = this.getInput();
 
