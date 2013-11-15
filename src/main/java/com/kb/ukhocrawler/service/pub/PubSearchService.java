@@ -83,7 +83,7 @@ public class PubSearchService extends SearchService {
                     }
                 }
                 if (searchMethod == 1) {
-                    if (str.equals(pubInput.getPubNumber())) {
+                    if (str.trim().equals(pubInput.getPubNumber().trim())) {
                         results.add(pub);
                         break;
                     }
