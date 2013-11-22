@@ -1,6 +1,5 @@
 package com.kb.ukhocrawler.service.chart;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class ChartInfoService extends InfoService {
     }
 
     @Override
-    protected void download() throws IOException {
+    protected void download() throws Exception {
         ChartDto chart = this.getInfo();
         if (chart.getInfoChartId().equals("")) {
             return;
@@ -34,7 +33,20 @@ public class ChartInfoService extends InfoService {
         String url = String.format(Constant.INFO_URL, chart.getInfoChartId());
         Util.print("Fetching info from %s...", url);
 
-        Document doc = Util.getConnection(url).get();
+        Document doc;
+        try {
+        	doc = Util.getConnection(url).get();
+        } catch(Exception e1) {
+        	try {
+            	doc = Util.getConnection(url).get();
+            } catch(Exception e2) {
+            	try {
+                	doc = Util.getConnection(url).get();
+                } catch(Exception e3) {
+                	throw e3;
+                }
+            }
+        }
 
         if (doc != null) {
             Elements uls = doc.select("ul[class=chart-details]");

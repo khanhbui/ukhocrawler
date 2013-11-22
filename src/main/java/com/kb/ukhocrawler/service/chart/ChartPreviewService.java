@@ -24,7 +24,7 @@ public class ChartPreviewService extends RunnableService {
     }
 
     @Override
-    protected void download() throws IOException {
+    protected void download() throws Exception {
         if (chart.getPreviewChartId().equals("")) {
             return;
         }
@@ -32,14 +32,27 @@ public class ChartPreviewService extends RunnableService {
         String url = String.format(Constant.PREVIEW_URL, chart.getPreviewChartId());
         Util.print("Fetching image from %s...", url);
         chart.setImage(url);
-        byte [] image = getDataFromUrl(url);
+        byte [] image;
+        try {
+        	image = getDataFromUrl(url);
+        } catch(Exception e1) {
+        	try {
+            	image = getDataFromUrl(url);
+            } catch(Exception e2) {
+            	try {
+                	image = getDataFromUrl(url);
+                } catch(Exception e3) {
+                	throw e3;
+                }
+            }
+        }
 
         if (image != null){
             String path = String.format(
                     Constant.PREVIEW_PATH, 
                     output + File.separator +
-                        chart.getChartType() + File.separator +
-                        chart.getChartNumber() + File.separator +
+                        "images" + File.separator +
+                        chart.getPrefix() + chart.getChartNumber() + chart.getSuffix() + File.separator +
                         chart.getPreviewChartId());
             Util.createDirs(path);
 
