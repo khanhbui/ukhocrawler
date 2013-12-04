@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import com.kb.ukhocrawler.dto.OutputDto;
@@ -29,12 +28,12 @@ import com.kb.ukhocrawler.service.chart.ChartInfoService;
 import com.kb.ukhocrawler.service.chart.ChartPreviewService;
 import com.kb.ukhocrawler.utils.Util;
 
-public class AllChartsController {
+public class AllChartsController extends Controller {
 
     public AllChartsController() {
     }
 
-    public void start(String[] args) throws IOException, InvalidFormatException
+    public void start(String[] args) throws IOException
     {
         String output = args[2];
         String outputDir = new File(output).getParent();

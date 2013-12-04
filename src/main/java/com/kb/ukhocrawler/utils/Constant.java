@@ -20,4 +20,7 @@ public class Constant {
     public static final String PUB_INFO_URL = "http://www.ukho.gov.uk/onlinecatalogue/popup_details_pubs.asp?PubID=%s";
 
     public static final String MAIN_URL = "http://www.ukho.gov.uk/onlinecatalogue/";
+
+    public static final String VOA_URL = "http://learningenglish.voanews.com";
+    public static final String VOA_AS_IT_IS_URL = "http://learningenglish.voanews.com/archive/as-it-is/%d/3521/3521.html?tab=2";
 }
