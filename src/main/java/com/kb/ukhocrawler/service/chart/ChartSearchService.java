@@ -88,7 +88,11 @@ public class ChartSearchService extends SearchService {
                     }
                 }
                 if (searchMethod == 1) {
-                    if (str.contains(chartInput.getChartPrefix() + chartInput.getChartNumber() + chartInput.getChartSuffix())) {
+                    String a = (chartInput.getChartPrefix().trim() + chartInput.getChartNumber().trim() + chartInput.getChartSuffix().trim()).toLowerCase();
+                    String b = str.toLowerCase().trim();
+                    Util.print("Comparing... |%s|==|%s|", a, b);
+                    if (a.equals(b)) {
+                    	Util.print("--Found... |%s|==|%s|=true", a, b);
                         results.add(chart);
                         return true;
                     }
