@@ -17,10 +17,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import com.kb.ukhocrawler.dto.OutputDto;
 import com.kb.ukhocrawler.dto.pub.PubInputDto;
 import com.kb.ukhocrawler.dto.pub.PubDto;
@@ -30,12 +30,12 @@ import com.kb.ukhocrawler.service.pub.PubInfoService;
 import com.kb.ukhocrawler.service.pub.PubSearchService;
 import com.kb.ukhocrawler.utils.Util;
 
-public class PubController {
+public class PubController extends Controller {
 
     public PubController() {
     }
 
-    public void start(String... args) throws IOException, InvalidFormatException
+    public void start(String[] args) throws IOException
     {
         String input = args[1];
         String output = args[2];
