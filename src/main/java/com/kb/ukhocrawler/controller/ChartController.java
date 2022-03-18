@@ -12,12 +12,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.kb.ukhocrawler.dto.OutputDto;
 import com.kb.ukhocrawler.dto.chart.ChartDto;
@@ -91,57 +88,57 @@ public class ChartController extends Controller {
         Sheet s1 = wb.createSheet("Charts");
         s1.createFreezePane(0, 1);
         Row r = s1.createRow(0);
-        r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("Prefix");
-        r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Chart Number");
-        r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue("Suffix");
-        r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue("Chart Title");
-        r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue("Publication Date");
-        r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue("Latest Edition date");
-        r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue("Chart Size");
-        r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue("Image");
+        r.createCell(0, CellType.STRING).setCellValue("Prefix");
+        r.createCell(1, CellType.STRING).setCellValue("Chart Number");
+        r.createCell(2, CellType.STRING).setCellValue("Suffix");
+        r.createCell(3, CellType.STRING).setCellValue("Chart Title");
+        r.createCell(4, CellType.STRING).setCellValue("Publication Date");
+        r.createCell(5, CellType.STRING).setCellValue("Latest Edition date");
+        r.createCell(6, CellType.STRING).setCellValue("Chart Size");
+        r.createCell(7, CellType.STRING).setCellValue("Image");
 
         Sheet s2 = wb.createSheet("Panels");
         s2.createFreezePane(0, 1);
         r = s2.createRow(0);
-        r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("ID");
-        r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Prefix");
-        r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue("Chart Number");
-        r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue("Suffix");
-        r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue("Panel Name");
-        r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue("Area Name");
-        r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue("Natural Scale");
-        r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue("North Limit");
-        r.createCell(8, Cell.CELL_TYPE_STRING).setCellValue("South Limit");
-        r.createCell(9, Cell.CELL_TYPE_STRING).setCellValue("East Limit");
-        r.createCell(10, Cell.CELL_TYPE_STRING).setCellValue("West Limit");
+        r.createCell(0, CellType.STRING).setCellValue("ID");
+        r.createCell(1, CellType.STRING).setCellValue("Prefix");
+        r.createCell(2, CellType.STRING).setCellValue("Chart Number");
+        r.createCell(3, CellType.STRING).setCellValue("Suffix");
+        r.createCell(4, CellType.STRING).setCellValue("Panel Name");
+        r.createCell(5, CellType.STRING).setCellValue("Area Name");
+        r.createCell(6, CellType.STRING).setCellValue("Natural Scale");
+        r.createCell(7, CellType.STRING).setCellValue("North Limit");
+        r.createCell(8, CellType.STRING).setCellValue("South Limit");
+        r.createCell(9, CellType.STRING).setCellValue("East Limit");
+        r.createCell(10, CellType.STRING).setCellValue("West Limit");
 
         int j = 1;
         for (int i = 0; i < charts.size(); ++i) {
             ChartDto chart = charts.get(i);
 
             r = s1.createRow(i + 1);
-            r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(chart.getPrefix());
-            r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartNumber());
-            r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(chart.getSuffix());
-            r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartTitle());
-            r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue(chart.getPublicationDate());
-            r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue(chart.getLatestEditionDate());
-            r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartSize());
-            r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue(chart.getImage());
+            r.createCell(0, CellType.STRING).setCellValue(chart.getPrefix());
+            r.createCell(1, CellType.STRING).setCellValue(chart.getChartNumber());
+            r.createCell(2, CellType.STRING).setCellValue(chart.getSuffix());
+            r.createCell(3, CellType.STRING).setCellValue(chart.getChartTitle());
+            r.createCell(4, CellType.STRING).setCellValue(chart.getPublicationDate());
+            r.createCell(5, CellType.STRING).setCellValue(chart.getLatestEditionDate());
+            r.createCell(6, CellType.STRING).setCellValue(chart.getChartSize());
+            r.createCell(7, CellType.STRING).setCellValue(chart.getImage());
 
             for(PanelDto panel: chart.getPanels()) {
                 r = s2.createRow(j++);
-                r.createCell(0, Cell.CELL_TYPE_NUMERIC).setCellValue(j);
-                r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(chart.getPrefix());
-                r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(chart.getChartNumber());
-                r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(chart.getSuffix());
-                r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue(panel.getPanelName());
-                r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue(panel.getAreaName());
-                r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue(panel.getNaturalScale());
-                r.createCell(7, Cell.CELL_TYPE_STRING).setCellValue(panel.getNorthLimit());
-                r.createCell(8, Cell.CELL_TYPE_STRING).setCellValue(panel.getSouthLimit());
-                r.createCell(9, Cell.CELL_TYPE_STRING).setCellValue(panel.getEastLimit());
-                r.createCell(10, Cell.CELL_TYPE_STRING).setCellValue(panel.getWestLimit());
+                r.createCell(0, CellType.NUMERIC).setCellValue(j);
+                r.createCell(1, CellType.STRING).setCellValue(chart.getPrefix());
+                r.createCell(2, CellType.STRING).setCellValue(chart.getChartNumber());
+                r.createCell(3, CellType.STRING).setCellValue(chart.getSuffix());
+                r.createCell(4, CellType.STRING).setCellValue(panel.getPanelName());
+                r.createCell(5, CellType.STRING).setCellValue(panel.getAreaName());
+                r.createCell(6, CellType.STRING).setCellValue(panel.getNaturalScale());
+                r.createCell(7, CellType.STRING).setCellValue(panel.getNorthLimit());
+                r.createCell(8, CellType.STRING).setCellValue(panel.getSouthLimit());
+                r.createCell(9, CellType.STRING).setCellValue(panel.getEastLimit());
+                r.createCell(10, CellType.STRING).setCellValue(panel.getWestLimit());
             }
         }
 
@@ -175,14 +172,19 @@ public class ChartController extends Controller {
                     item[i] = "";
                 } else {
                     switch (cell.getCellType()) {
-                        case Cell.CELL_TYPE_BLANK:
+                        case BLANK:
                             item[i] = "";
                             break;
-                        case Cell.CELL_TYPE_NUMERIC:
+                        case NUMERIC:
                             item[i] = Integer.toString((int) cell.getNumericCellValue());
                             break;
-                        case Cell.CELL_TYPE_STRING:
+                        case STRING:
                             item[i] = cell.getStringCellValue();
+                            break;
+                        case _NONE:
+                        case BOOLEAN:
+                        case FORMULA:
+                        case ERROR:
                             break;
                     }
                 }

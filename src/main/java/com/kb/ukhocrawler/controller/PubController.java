@@ -13,12 +13,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.kb.ukhocrawler.dto.OutputDto;
@@ -96,43 +93,43 @@ public class PubController extends Controller {
         Sheet s1 = wb.createSheet("Publications");
         s1.createFreezePane(0, 1);
         Row r = s1.createRow(0);
-        r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("Number");
-        r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Title");
-        r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue("Sub Title");
-        r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue("Type");
-        r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue("Sub Type");
-        r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue("Edition No");
-        r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue("Pub Year");
+        r.createCell(0, CellType.STRING).setCellValue("Number");
+        r.createCell(1, CellType.STRING).setCellValue("Title");
+        r.createCell(2, CellType.STRING).setCellValue("Sub Title");
+        r.createCell(3, CellType.STRING).setCellValue("Type");
+        r.createCell(4, CellType.STRING).setCellValue("Sub Type");
+        r.createCell(5, CellType.STRING).setCellValue("Edition No");
+        r.createCell(6, CellType.STRING).setCellValue("Pub Year");
 
         Sheet s2 = wb.createSheet("Supplements");
         s2.createFreezePane(0, 1);
         r = s2.createRow(0);
-        r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue("Pub. Number");
-        r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue("Sup. Number");
-        r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue("Sup. Title");
-        r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue("Sup. Year");
-        r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue("Edition No");
+        r.createCell(0, CellType.STRING).setCellValue("Pub. Number");
+        r.createCell(1, CellType.STRING).setCellValue("Sup. Number");
+        r.createCell(2, CellType.STRING).setCellValue("Sup. Title");
+        r.createCell(3, CellType.STRING).setCellValue("Sup. Year");
+        r.createCell(4, CellType.STRING).setCellValue("Edition No");
 
         int j = 1;
         for (int i = 0; i < pubs.size(); ++i) {
             PubDto pub = pubs.get(i);
 
             r = s1.createRow(i + 1);
-            r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(pub.getNumber());
-            r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(pub.getTitle());
-            r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(pub.getSubTitle());
-            r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(pub.getType());
-            r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue(pub.getSubType());
-            r.createCell(5, Cell.CELL_TYPE_STRING).setCellValue(pub.getEditionNo());
-            r.createCell(6, Cell.CELL_TYPE_STRING).setCellValue(pub.getPubYear());
+            r.createCell(0, CellType.STRING).setCellValue(pub.getNumber());
+            r.createCell(1, CellType.STRING).setCellValue(pub.getTitle());
+            r.createCell(2, CellType.STRING).setCellValue(pub.getSubTitle());
+            r.createCell(3, CellType.STRING).setCellValue(pub.getType());
+            r.createCell(4, CellType.STRING).setCellValue(pub.getSubType());
+            r.createCell(5, CellType.STRING).setCellValue(pub.getEditionNo());
+            r.createCell(6, CellType.STRING).setCellValue(pub.getPubYear());
 
             for (PubSupplement sup: pub.getSupplements()) {
                 r = s2.createRow(j++);
-                r.createCell(0, Cell.CELL_TYPE_STRING).setCellValue(pub.getNumber());
-                r.createCell(1, Cell.CELL_TYPE_STRING).setCellValue(sup.getNumber());
-                r.createCell(2, Cell.CELL_TYPE_STRING).setCellValue(sup.getTitle());
-                r.createCell(3, Cell.CELL_TYPE_STRING).setCellValue(sup.getYear());
-                r.createCell(4, Cell.CELL_TYPE_STRING).setCellValue(sup.getEditionNo());
+                r.createCell(0, CellType.STRING).setCellValue(pub.getNumber());
+                r.createCell(1, CellType.STRING).setCellValue(sup.getNumber());
+                r.createCell(2, CellType.STRING).setCellValue(sup.getTitle());
+                r.createCell(3, CellType.STRING).setCellValue(sup.getYear());
+                r.createCell(4, CellType.STRING).setCellValue(sup.getEditionNo());
             }
         }
 
@@ -166,14 +163,19 @@ public class PubController extends Controller {
                     item[i] = "";
                 } else {
                     switch (cell.getCellType()) {
-                        case Cell.CELL_TYPE_BLANK:
+                        case BLANK:
                             item[i] = "";
                             break;
-                        case Cell.CELL_TYPE_NUMERIC:
+                        case NUMERIC:
                             item[i] = Integer.toString((int) cell.getNumericCellValue());
                             break;
-                        case Cell.CELL_TYPE_STRING:
+                        case STRING:
                             item[i] = cell.getStringCellValue();
+                            break;
+                        case _NONE:
+                        case BOOLEAN:
+                        case FORMULA:
+                        case ERROR:
                             break;
                     }
                 }
